@@ -33,6 +33,11 @@ class UserResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
 
+    public static function shouldRegisterNavigation(): bool
+{
+    return auth()->user()?->role === 'admin';
+}
+
     // FILTER AGAR HANYA MAHASISWA YANG TAMPIL
     public static function getEloquentQuery(): Builder
     {

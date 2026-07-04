@@ -71,7 +71,7 @@ class TopsisCalculation extends Page implements Tables\Contracts\HasTable
             TextColumn::make('name')->label('Alternative'), 
             TextColumn::make('preference_score') 
                 ->label('Preference Score') 
-                ->formatStateUsing(fn ($state) => number_format($state, 4)), 
+                ->formatStateUsing(fn ($state) => number_format($state, 3)),
             TextColumn::make('rank')->label('Rank'), 
         ]; 
     } 

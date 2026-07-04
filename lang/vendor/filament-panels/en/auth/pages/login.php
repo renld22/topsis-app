@@ -69,7 +69,7 @@ return [
 
     'messages' => [
 
-        'failed' => 'These credentials do not match our records.',
+        'failed' => 'Email atau password salah.',
 
     ],
 

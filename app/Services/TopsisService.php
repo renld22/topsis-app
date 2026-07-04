@@ -142,7 +142,7 @@ class TopsisService
             $results[] = [
                 'alternative_id' => $altId,
                 'name' => $alternatives->find($altId)->name,
-                'preference_score' => round($score, 4),
+                'preference_score' => round($score, 3),
                 'rank' => $rank++,
             ];
         }

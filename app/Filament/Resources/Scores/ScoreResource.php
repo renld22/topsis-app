@@ -46,9 +46,14 @@ Heroicon::OutlinedIdentification;
         ->components([ 
             Select::make('alternative_id') 
                 ->label('Pilih Dosen') // Menambahkan label agar lebih jelas
-                ->options(Alternative::pluck('name', 'id')) 
+                ->options(function () {
+                    $order = ['Marc Klok' => 0, 'Beckham' => 1, 'Haye' => 2, 'Barba' => 3];
+
+                    return Alternative::pluck('name', 'id')
+                        ->sortBy(fn ($name) => $order[$name] ?? 999);
+                }) 
                 ->searchable() // Biar ada kotak pencarian (Select2 style)
-                ->preload()    // Biar datanya langsung muncul pas diklik
+                ->preload()
                 ->required(), 
 
             Select::make('criterion_id') 

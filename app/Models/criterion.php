@@ -9,7 +9,7 @@ class criterion extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'type', 'weight'];
+    protected $fillable = ['name', 'type', 'weight', 'description'];
 
     public function scores(): HasMany
     {

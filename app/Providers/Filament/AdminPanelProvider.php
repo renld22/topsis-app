@@ -32,7 +32,12 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             //->registration()
-            ->brandName('Topsis App Admin')
+            ->brandName(new \Illuminate\Support\HtmlString('        
+                <div style="text-align: center; width: 100%;">
+                    <strong>SPK Evaluasi Mengajar dosen</strong><br>
+                    <strong>Universitas Muhammadiyah Banten</strong>
+                </div>
+            '))
             ->colors([
                 'primary' => Color::Amber,
             ])

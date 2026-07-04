@@ -50,6 +50,7 @@ class AlternativeResource extends Resource
 
                 TextInput::make('address')
                     ->label('Alamat')
+                    ->required()
                     ->maxLength(255),
 
                 TextInput::make('email')
@@ -93,6 +94,7 @@ class AlternativeResource extends Resource
                         ->maxLength(255),
 
                     TextInput::make('address')
+                        ->required()
                         ->maxLength(255),
 
                     TextInput::make('email')

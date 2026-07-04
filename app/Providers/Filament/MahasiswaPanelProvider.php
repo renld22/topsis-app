@@ -27,7 +27,15 @@ class MahasiswaPanelProvider extends PanelProvider
             ->id('mahasiswa')
             ->path('mahasiswa')
             ->login()
-             ->registration(Register::class)
+            ->brandName(new \Illuminate\Support\HtmlString('
+    <div style="text-align:center; width:100%;">
+        <strong>
+            Evaluasi Mengajar dosen
+            Universitas Muhammadiyah Banten
+        </strong>
+    </div>
+'))
+            ->registration(\App\Filament\Pages\Auth\Register::class)
             ->colors([
                 'primary' => Color::Amber,
             ])

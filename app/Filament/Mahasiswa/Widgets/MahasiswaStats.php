@@ -7,23 +7,31 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class MahasiswaStats extends BaseWidget
 {
-    
+    protected int | string | array $columnSpan = 'full';
+
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Kriteria Penilaian', '5')
-                ->description('Kriteria yang digunakan dalam metode TOPSIS')
+            Stat::make('Total Kriteria', '5')
+                ->description('Semua kriteria TOPSIS tersedia')
                 ->descriptionIcon('heroicon-m-clipboard-document-check')
-                ->color('primary'),
+                ->descriptionColor('primary')
+                ->color('primary')
+                ->chart([20, 40, 60, 80, 100]),
 
-            Stat::make('Status Akun Mahasiswa', 'Aktif')
-                ->description('Anda terdaftar sebagai penilai')
+            Stat::make('Status Akun', 'Aktif')
+                ->description('Akun Anda siap memberi nilai')
                 ->descriptionIcon('heroicon-m-check-badge')
-                ->color('success'),
-                Stat::make('Sistem Informasi', 'Penilaian Evaluasi Kinerja Dosen')
-                ->description('Universitas Muhammadiyah Banten') // Menyesuaikan kampus Anda
+                ->descriptionColor('success')
+                ->color('success')
+                ->chart([15, 35, 55, 75, 95]),
+
+            Stat::make('Sistem', 'Evaluasi Mengajar Dosen')
+                ->description('Universitas Muhammadiyah Banten')
                 ->descriptionIcon('heroicon-m-academic-cap')
-                ->color('primary'),
-         ];
+                ->descriptionColor('warning')
+                ->color('warning')
+                ->chart([10, 30, 50, 70, 90]),
+        ];
     }
 }

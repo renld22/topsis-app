@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('alternatives', function (Blueprint $table) {
-            if (! Schema::hasColumn('alternatives', 'email')) {
-                $table->string('email')->nullable();
-            }
+        Schema::table('criteria', function (Blueprint $table) {
+            $table->text('description')->nullable()->after('weight');
         });
     }
 
@@ -23,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('alternatives', function (Blueprint $table) {
-            $table->dropColumn('email');
+        Schema::table('criteria', function (Blueprint $table) {
+            $table->dropColumn('description');
         });
     }
 };

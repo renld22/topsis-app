@@ -23,23 +23,30 @@
                     Sistem Penunjang Keputusan Metode TOPSIS
                 </p>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {{-- Item 1 --}}
-                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/40 dark:bg-white/5 border border-white/30 backdrop-blur-md">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-600 text-lg font-bold text-white shadow-lg">1</span>
-                        <span class="text-md font-bold text-gray-800 dark:text-gray-200 leading-tight">Skala Penilaian <br> 1 - 5</span>
+                    <div class="flex flex-col gap-3 p-5 rounded-3xl bg-white/80 dark:bg-slate-900/95 border border-slate-200/70 dark:border-slate-700 shadow-lg">
+                        <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-500 text-base font-semibold text-white shadow-md">1.</span>
+                        <span class="text-sm font-semibold text-slate-900 dark:text-white">Skala Penilaian 1 - 5</span>
+                            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Nilai setiap kriteria dengan jujur dan konsisten.</p>
+            
                     </div>
 
                     {{-- Item 2 --}}
-                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/40 dark:bg-white/5 border border-white/30 backdrop-blur-md">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-600 text-lg font-bold text-white shadow-lg">2</span>
-                        <span class="text-md font-bold text-gray-800 dark:text-gray-200 leading-tight">Wajib Isi Semua <br> Kriteria</span>
+                    <div class="flex flex-col gap-3 p-5 rounded-3xl bg-white/80 dark:bg-slate-900/95 border border-slate-200/70 dark:border-slate-700 shadow-lg">
+                        <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-base font-semibold text-white shadow-md">2.</span>
+                        <span class="text-sm font-semibold text-slate-900 dark:text-white">Wajib Isi Semua Kriteria</span>
+                              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Setiap aspek dosen harus dinilai agar hasil lebih akurat.</p>
+                        
                     </div>
 
                     {{-- Item 3 --}}
-                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/40 dark:bg-white/5 border border-white/30 backdrop-blur-md">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-600 text-lg font-bold text-white shadow-lg">3</span>
-                        <span class="text-md font-bold text-gray-800 dark:text-gray-200 leading-tight">Berikan Penilaian <br> Objektif</span>
+                    <div class="flex flex-col gap-3 p-5 rounded-3xl bg-white/80 dark:bg-slate-900/95 border border-slate-200/70 dark:border-slate-700 shadow-lg">
+                        <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500 text-base font-semibold text-white shadow-md">3.</span>
+                        
+                            <span class="text-sm font-semibold text-slate-900 dark:text-white">Berikan Penilaian Objektif</span>
+                            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Nilai berdasarkan kenyataan dan performa dosen.</p>
+                        
                     </div>
                 </div>
             </div>

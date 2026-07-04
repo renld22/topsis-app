@@ -62,7 +62,7 @@ class ResultResource extends Resource
                 TextColumn::make('preference_score')
                     ->label('Skor Akhir')
                     ->formatStateUsing(
-                        fn($state) => number_format($state, 4)
+                        fn($state) => number_format($state, 3)
                     ),
 
                 TextColumn::make('rank')

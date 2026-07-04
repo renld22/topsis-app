@@ -12,6 +12,7 @@ use Filament\Support\Icons\Heroicon;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 
 use Filament\Tables\Columns\TextColumn;
 
@@ -58,6 +59,12 @@ class CriterionResource extends Resource
                     ->label('Bobot')
                     ->numeric()
                     ->required(),
+
+                Textarea::make('description')
+                    ->label('Deskripsi')
+                    ->rows(3)
+                    ->helperText('Deskripsi akan muncul di form penilaian ketika kriteria dipilih.')
+                    ->columnSpan('full'),
             ]);
     }
 
@@ -79,6 +86,9 @@ class CriterionResource extends Resource
                 TextColumn::make('weight')
                     ->label('Weight')
                     ->numeric(decimalPlaces: 2),
+                TextColumn::make('description')
+                    ->label('Deskripsi')
+                    ->limit(50),
             ])
 
             ->recordActions([
@@ -97,6 +107,10 @@ class CriterionResource extends Resource
                         TextInput::make('weight')
                             ->numeric()
                             ->required(),
+
+                        Textarea::make('description')
+                            ->rows(3)
+                            ->columnSpan('full'),
                     ]),
 
                 DeleteAction::make(),
