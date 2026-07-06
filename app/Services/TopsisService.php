@@ -4,11 +4,13 @@ namespace App\Services;
 
 use App\Models\Alternative;
 use App\Models\Criterion;
-use App\Models\Score;
 use App\Models\Result;
+use App\Models\Score;
 
 class TopsisService
 {
+    public function __construct(private WeightService $weightService = new WeightService) {}
+
     public function calculateTopsis()
     {
         $alternatives = Alternative::all();
@@ -19,9 +21,11 @@ class TopsisService
             return [];
         }
 
+        $weights = $this->weightService->criteriaWeights();
+
         $decisionMatrix = $this->buildDecisionMatrix($alternatives, $criteria, $scores);
         $normalizedMatrix = $this->normalizeMatrix($decisionMatrix);
-        $weightedMatrix = $this->applyWeights($normalizedMatrix, $criteria);
+        $weightedMatrix = $this->applyWeights($normalizedMatrix, $weights);
         $idealPositive = $this->calculateIdealPositive($weightedMatrix, $criteria);
         $idealNegative = $this->calculateIdealNegative($weightedMatrix, $criteria);
         $distances = $this->calculateDistances($weightedMatrix, $idealPositive, $idealNegative);
@@ -51,6 +55,7 @@ class TopsisService
             }
             $matrix[$alt->id] = $row;
         }
+
         return $matrix;
     }
 
@@ -69,19 +74,21 @@ class TopsisService
                 $normalized[$altId][$critId] = $sums[$critId] > 0 ? $value / sqrt($sums[$critId]) : 0;
             }
         }
+
         return $normalized;
     }
 
-    private function applyWeights($normalizedMatrix, $criteria)
+    private function applyWeights($normalizedMatrix, array $weights)
     {
         $weighted = [];
         foreach ($normalizedMatrix as $altId => $row) {
             $weighted[$altId] = [];
             foreach ($row as $critId => $value) {
-                $weight = $criteria->find($critId)->weight;
+                $weight = $weights[$critId] ?? 0;
                 $weighted[$altId][$critId] = $value * $weight;
             }
         }
+
         return $weighted;
     }
 
@@ -92,6 +99,7 @@ class TopsisService
             $values = array_column($weightedMatrix, $crit->id);
             $idealPositive[$crit->id] = $crit->type === 'benefit' ? max($values) : min($values);
         }
+
         return $idealPositive;
     }
 
@@ -102,6 +110,7 @@ class TopsisService
             $values = array_column($weightedMatrix, $crit->id);
             $idealNegative[$crit->id] = $crit->type === 'benefit' ? min($values) : max($values);
         }
+
         return $idealNegative;
     }
 
@@ -120,6 +129,7 @@ class TopsisService
                 'negative' => sqrt($negativeDistance),
             ];
         }
+
         return $distances;
     }
 
@@ -130,6 +140,7 @@ class TopsisService
             $denom = $dist['positive'] + $dist['negative'];
             $preferences[$altId] = $denom > 0 ? $dist['negative'] / $denom : 0;
         }
+
         return $preferences;
     }
 
@@ -146,6 +157,7 @@ class TopsisService
                 'rank' => $rank++,
             ];
         }
+
         return $results;
     }
 }

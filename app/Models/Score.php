@@ -9,7 +9,7 @@ class Score extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['alternative_id', 'criterion_id', 'value'];
+    protected $fillable = ['alternative_id', 'criterion_id', 'sub_criterion_id', 'value'];
 
     public function alternative()
     {
@@ -18,6 +18,11 @@ class Score extends Model
 
     public function criterion()
     {
-        return $this->belongsTo(criterion::class);
+        return $this->belongsTo(Criterion::class);
+    }
+
+    public function subCriterion()
+    {
+        return $this->belongsTo(SubCriterion::class);
     }
 }

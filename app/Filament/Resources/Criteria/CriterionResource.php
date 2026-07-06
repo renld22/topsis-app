@@ -2,26 +2,20 @@
 
 namespace App\Filament\Resources\Criteria;
 
-use BackedEnum;
+use App\Filament\Resources\Criteria\Pages\ManageCriteria;
 use App\Models\Criterion;
-
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
-use Filament\Support\Icons\Heroicon;
-
+use App\Services\WeightService;
+use BackedEnum;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
-
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-
 use Filament\Tables\Enums\RecordActionsPosition;
-
-use App\Filament\Resources\Criteria\Pages\ManageCriteria;
+use Filament\Tables\Table;
 
 class CriterionResource extends Resource
 {
@@ -54,17 +48,6 @@ class CriterionResource extends Resource
                         'cost' => 'Cost',
                     ])
                     ->required(),
-
-                TextInput::make('weight')
-                    ->label('Bobot')
-                    ->numeric()
-                    ->required(),
-
-                Textarea::make('description')
-                    ->label('Deskripsi')
-                    ->rows(3)
-                    ->helperText('Deskripsi akan muncul di form penilaian ketika kriteria dipilih.')
-                    ->columnSpan('full'),
             ]);
     }
 
@@ -81,36 +64,35 @@ class CriterionResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('type')
-                    ->label('Type'),
+                    ->label('Type')
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'benefit' ? 'success' : 'danger'),
+
+                TextColumn::make('sub_criteria_count')
+                    ->label('Jumlah Subkriteria')
+                    ->counts('subCriteria'),
 
                 TextColumn::make('weight')
-                    ->label('Weight')
-                    ->numeric(decimalPlaces: 2),
-                TextColumn::make('description')
-                    ->label('Deskripsi')
-                    ->limit(50),
+                    ->label('Bobot (otomatis)')
+                    ->state(fn (Criterion $record): float => app(WeightService::class)->weightFor($record->id))
+                    ->formatStateUsing(fn ($state): string => number_format((float) $state, 3))
+                    ->tooltip('Bobot dihitung otomatis dari penilaian mahasiswa (total selalu = 1).'),
             ])
 
             ->recordActions([
                 EditAction::make()
                     ->form([
                         TextInput::make('name')
+                            ->label('Nama Kriteria')
                             ->required(),
 
                         Select::make('type')
+                            ->label('Tipe')
                             ->options([
                                 'benefit' => 'Benefit',
                                 'cost' => 'Cost',
                             ])
                             ->required(),
-
-                        TextInput::make('weight')
-                            ->numeric()
-                            ->required(),
-
-                        Textarea::make('description')
-                            ->rows(3)
-                            ->columnSpan('full'),
                     ]),
 
                 DeleteAction::make(),
