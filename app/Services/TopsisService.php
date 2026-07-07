@@ -12,7 +12,7 @@ class TopsisService
     public function calculateTopsis()
     {
         $alternatives = Alternative::all();
-        $criteria = Criterion::all();
+        $criteria = Criterion::with('subCriteria')->get();
         $scores = Score::all();
 
         if ($alternatives->isEmpty() || $criteria->isEmpty()) {
@@ -46,8 +46,11 @@ class TopsisService
         foreach ($alternatives as $alt) {
             $row = [];
             foreach ($criteria as $crit) {
-                $score = $scores->where('alternative_id', $alt->id)->where('criterion_id', $crit->id)->first();
-                $row[$crit->id] = $score ? $score->value : 0;
+                $subCriteriaIds = $crit->subCriteria->pluck('id');
+                $avgValue = $scores->where('alternative_id', $alt->id)
+                                   ->whereIn('sub_criterion_id', $subCriteriaIds)
+                                   ->avg('value');
+                $row[$crit->id] = $avgValue !== null ? (float) $avgValue : 0.0;
             }
             $matrix[$alt->id] = $row;
         }
@@ -128,7 +131,7 @@ class TopsisService
         $preferences = [];
         foreach ($distances as $altId => $dist) {
             $denom = $dist['positive'] + $dist['negative'];
-            $preferences[$altId] = $denom > 0 ? $dist['negative'] / $denom : 0;
+            $preferences[$altId] = $denom > 0 ? round($dist['negative'] / $denom, 3) : 0;
         }
         return $preferences;
     }

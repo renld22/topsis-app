@@ -28,15 +28,15 @@
                     <div class="flex flex-col gap-3 p-5 rounded-3xl bg-white/80 dark:bg-slate-900/95 border border-slate-200/70 dark:border-slate-700 shadow-lg">
                         <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-500 text-base font-semibold text-white shadow-md">1.</span>
                         <span class="text-sm font-semibold text-slate-900 dark:text-white">Skala Penilaian 1 - 5</span>
-                            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Nilai setiap kriteria dengan jujur dan konsisten.</p>
+                            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Nilai setiap sub-kriteria dengan jujur dan konsisten.</p>
             
                     </div>
-
+ 
                     {{-- Item 2 --}}
                     <div class="flex flex-col gap-3 p-5 rounded-3xl bg-white/80 dark:bg-slate-900/95 border border-slate-200/70 dark:border-slate-700 shadow-lg">
                         <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-base font-semibold text-white shadow-md">2.</span>
-                        <span class="text-sm font-semibold text-slate-900 dark:text-white">Wajib Isi Semua Kriteria</span>
-                              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Setiap aspek dosen harus dinilai agar hasil lebih akurat.</p>
+                        <span class="text-sm font-semibold text-slate-900 dark:text-white">Wajib Isi Semua Sub-Kriteria</span>
+                              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Setiap sub-kriteria dosen harus dinilai agar hasil lebih akurat.</p>
                         
                     </div>
 

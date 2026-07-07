@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('criteria', function (Blueprint $table) {
+        Schema::create('sub_criteria', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('criterion_id')->constrained('criteria')->onDelete('cascade');
             $table->string('name');
-            $table->enum('type',['benefit','cost']);
-            $table->float('weight')->default(0);
+            $table->integer('value');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('criteria');
+        Schema::dropIfExists('sub_criteria');
     }
 };

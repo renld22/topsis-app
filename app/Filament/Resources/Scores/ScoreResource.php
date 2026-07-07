@@ -74,9 +74,10 @@ Heroicon::OutlinedIdentification;
         return $table 
             ->recordTitleAttribute('alternative') 
             ->columns([ 
-                TextColumn::make('alternative.name')->searchable(), 
-                TextColumn::make('criterion.name'), 
-                TextColumn::make('value'), 
+                TextColumn::make('alternative.name')->label('Nama Dosen')->searchable(), 
+                TextColumn::make('criterion.name')->label('Kriteria'), 
+                TextColumn::make('subCriterion.name')->label('Sub Kriteria')->wrap(), 
+                TextColumn::make('value')->label('Skor'), 
             ]) 
             ->filters([ 
                 // 

@@ -12,16 +12,16 @@ class MahasiswaStats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Kriteria', '5')
-                ->description('Semua kriteria TOPSIS tersedia')
+            Stat::make('Total Kriteria', \App\Models\Criterion::count())
+                ->description('Semua kriteria TOPSIS')
                 ->descriptionIcon('heroicon-m-clipboard-document-check')
                 ->descriptionColor('primary')
                 ->color('primary')
                 ->chart([20, 40, 60, 80, 100]),
 
-            Stat::make('Status Akun', 'Aktif')
-                ->description('Akun Anda siap memberi nilai')
-                ->descriptionIcon('heroicon-m-check-badge')
+            Stat::make('Total Sub Kriteria', \App\Models\SubCriterion::count())
+                ->description('Semua sub-kriteria evaluasi')
+                ->descriptionIcon('heroicon-m-list-bullet')
                 ->descriptionColor('success')
                 ->color('success')
                 ->chart([15, 35, 55, 75, 95]),

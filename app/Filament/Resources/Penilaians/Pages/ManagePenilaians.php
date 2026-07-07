@@ -6,12 +6,14 @@ use App\Filament\Resources\Penilaians\PenilaianResource;
 use App\Models\Alternative;
 use App\Models\Criterion;
 use App\Models\Score;
+use App\Models\SubCriterion;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Html;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Schemas\Components\Section;
 use Filament\Notifications\Notification;
 
 class ManagePenilaians extends ManageRecords
@@ -20,99 +22,64 @@ class ManagePenilaians extends ManageRecords
 
     protected function getHeaderActions(): array
     {
+        // Dynamically build form components based on database criteria and sub-criteria
+        $formComponents = [
+            Select::make('alternative_id')
+                ->label('Pilih Dosen')
+                ->options(function () {
+                    $order = ['Marc Klok' => 0, 'Beckham' => 1, 'Haye' => 2, 'Barba' => 3];
+
+                    return Alternative::doesntHave('scores')
+                        ->get()
+                        ->pluck('name', 'id')
+                        ->sortBy(fn ($name) => $order[$name] ?? 999);
+                })
+                ->searchable()
+                ->helperText('Hanya dosen yang belum dinilai yang dapat dipilih.')
+                ->required(),
+        ];
+
+        try {
+            $criteria = Criterion::with('subCriteria')->get();
+            $assessmentFields = [];
+            foreach ($criteria as $crit) {
+                if ($crit->subCriteria->isEmpty()) {
+                    continue;
+                }
+                
+                // Urutkan opsi subkriteria dari nilai 5 ke 1
+                $options = [];
+                foreach ($crit->subCriteria->sortByDesc('value') as $sub) {
+                    $options[$sub->id] = "{$sub->value} - {$sub->name}";
+                }
+
+                $assessmentFields[] = Select::make("criteria.{$crit->id}")
+                    ->label($crit->name)
+                    ->options($options)
+                    ->native(false)
+                    ->required()
+                    ->helperText("Pilih subkriteria yang paling menggambarkan kinerja dosen untuk kriteria: " . $crit->name);
+            }
+
+            if (!empty($assessmentFields)) {
+                $formComponents[] = Section::make('Kuesioner Evaluasi Dosen')
+                    ->description('Silakan pilih salah satu subkriteria yang paling menggambarkan kinerja dosen pada masing-masing kriteria.')
+                    ->schema($assessmentFields);
+            }
+        } catch (\Exception $e) {
+            // Fallback if table does not exist during migration phase
+        }
+
         return [
             CreateAction::make()
                 ->label('New Score')
-                ->modalWidth('xl')
-                ->form([
-                    Select::make('alternative_id')
-                        ->label('Pilih Dosen')
-                        ->options(function () {
-                            $order = ['Marc Klok' => 0, 'Beckham' => 1, 'Haye' => 2, 'Barba' => 3];
-
-                            return Alternative::doesntHave('scores')
-                                ->get()
-                                ->pluck('name', 'id')
-                                ->sortBy(fn ($name) => $order[$name] ?? 999);
-                        })
-                        ->searchable()
-                        ->helperText('Hanya dosen yang belum dinilai yang dapat dipilih.')
-                        ->required(),
-                    Repeater::make('scores')
-                        ->label('Nilai Semua Kriteria')
-                        ->schema([
-                            Select::make('criterion_id')
-                                ->label('Kriteria')
-                                ->options(Criterion::pluck('name', 'id'))
-                                ->searchable()
-                                ->required()
-                                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                ->helperText(function (callable $get) {
-                                    $criterion = Criterion::find($get('criterion_id'));
-
-                                    if (!$criterion) {
-                                        return 'Pilih kriteria terlebih dahulu sebelum mengisi nilai.';
-                                    }
-
-                                    return $criterion->description ?: 'Pilih kriteria terlebih dahulu sebelum mengisi nilai.';
-                                })
-                                ->rules(function (callable $get) {
-                                    return [
-                                        function ($attribute, $value, $fail) use ($get) {
-                                            $alternativeId = $get('alternative_id');
-
-                                            if (!$alternativeId || !$value) {
-                                                return;
-                                            }
-
-                                            if (Score::where('alternative_id', $alternativeId)
-                                                ->where('criterion_id', $value)
-                                                ->exists()) {
-                                                $fail('Kombinasi Dosen & Kriteria ini sudah pernah Anda nilai! Tidak boleh menilai yang sama dua kali.');
-                                            }
-                                        },
-                                    ];
-                                }),
-                              TextInput::make('value')
-                        ->label('Penilaian')
-                        ->required()
-                        ->numeric()
-                        ->belowContent(
-                            Html::make(new \Illuminate\Support\HtmlString('<div class="text-sm text-gray-500">Nilai harus antara 1-5.
-                             <br>keterangan penilaian :<br>5: Baik sekali, 4: Baik,<br>3: Cukup, 2: Kurang,<br>1: Sangat kurang.</div>'))
-                        )
-                        ->rules([
-                            'numeric',
-                            'between:1,5',
-                        ])
-                        ->validationMessages([
-                            'required' => 'Nilai harus antara 1-5',
-                            'numeric' => 'Nilai harus antara 1-5',
-                            'between' => 'Nilai harus antara 1-5',
-                        ])
-                        ])
-                        ->columns(2)
-                        ->minItems(1)
-                        ->maxItems(5)
-                        ->createItemButtonLabel('Tambah Kriteria'),
-                ])
+                ->modalWidth('2xl')
+                ->form($formComponents)
                 ->action(function (array $data): void {
-                    // Cek duplikat criterion_id di dalam repeater sebelum menyimpan
-                    $ids = array_column($data['scores'], 'criterion_id');
-                    if (count($ids) !== count(array_unique($ids))) {
-                        Notification::make()
-                            ->danger()
-                            ->title('Duplikat nilai')
-                            ->body('Terdapat kriteria duplikat dalam daftar nilai.')
-                            ->send();
+                    $alternativeId = $data['alternative_id'];
 
-                        throw \Illuminate\Validation\ValidationException::withMessages([
-                            'scores' => ['Terdapat kriteria duplikat dalam daftar nilai.']
-                        ]);
-                    }
-
-                    // Cek apakah kombinasi alternative_id + criterion_id sudah ada di DB
-                    if (Score::where('alternative_id', $data['alternative_id'])->exists()) {
+                    // Cek apakah alternatif sudah pernah dinilai
+                    if (Score::where('alternative_id', $alternativeId)->exists()) {
                         Notification::make()
                             ->danger()
                             ->title('Duplikat dosen')
@@ -124,31 +91,29 @@ class ManagePenilaians extends ManageRecords
                         ]);
                     }
 
-                    foreach ($data['scores'] as $index => $item) {
-                        $exists = Score::where('alternative_id', $data['alternative_id'])
-                            ->where('criterion_id', $item['criterion_id'])
-                            ->exists();
-
-                        if ($exists) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Duplikat nilai')
-                                ->body('Kombinasi Dosen & Kriteria ini sudah pernah Anda nilai! Tidak boleh menilai yang sama dua kali.')
-                                ->send();
-
-                            throw \Illuminate\Validation\ValidationException::withMessages([
-                                "scores.$index.criterion_id" => ['Kombinasi Dosen & Kriteria ini sudah pernah Anda nilai! Tidak boleh menilai yang sama dua kali.'],
-                            ]);
+                    // Simpan score ke database
+                    if (isset($data['criteria']) && is_array($data['criteria'])) {
+                        foreach ($data['criteria'] as $criterionId => $subCriterionId) {
+                            $subCriterion = \App\Models\SubCriterion::find($subCriterionId);
+                            if ($subCriterion) {
+                                Score::create([
+                                    'alternative_id' => $alternativeId,
+                                    'criterion_id' => $criterionId,
+                                    'sub_criterion_id' => $subCriterionId,
+                                    'value' => (float) $subCriterion->value,
+                                ]);
+                            }
                         }
                     }
 
-                    foreach ($data['scores'] as $item) {
-                        Score::create([
-                            'alternative_id' => $data['alternative_id'],
-                            'criterion_id' => $item['criterion_id'],
-                            'value' => $item['value'],
-                        ]);
-                    }
+                    // Reset cache topsis hasil agar dihitung ulang
+                    \Illuminate\Support\Facades\Cache::forget('topsis_results');
+
+                    Notification::make()
+                        ->success()
+                        ->title('Berhasil')
+                        ->body('Penilaian dosen berhasil disimpan.')
+                        ->send();
                 }),
         ];
     }

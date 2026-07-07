@@ -58,13 +58,13 @@ class PenilaianResource extends Resource
                 ->required(fn ($get) => !empty($get('criterion_id')))
                 ->helperText('Isi nilai 1-5 (Pastikan kriteria sudah dipilih terlebih dahulu)')
                 
-                // Matikan validasi oranye bawaan Chrome
+                // Matikan validasi 
                 ->extraAttributes(['novalidate' => 'novalidate']) 
                 
                 // Aturan validasi Laravel manual
                 ->rules(['numeric', 'between:1,5'])
                 
-                // Pesan validasi kustom (sekarang 100% berfungsi)
+                // Pesan validasi 
                 ->validationMessages([
                     'required' => 'Skor wajib diisi (Kriteria & Nilai harus lengkap)',
                     'numeric'  => 'Harus berupa angka!',
@@ -82,6 +82,9 @@ class PenilaianResource extends Resource
                     ->searchable(),
                 TextColumn::make('criterion.name')
                     ->label('Kriteria'),
+                TextColumn::make('subCriterion.name')
+                    ->label('Sub Kriteria')
+                    ->wrap(),
                 TextColumn::make('value')
                     ->label('Skor'),
                 TextColumn::make('created_at')

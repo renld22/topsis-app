@@ -56,15 +56,11 @@ class CriterionResource extends Resource
                     ->required(),
 
                 TextInput::make('weight')
-                    ->label('Bobot')
+                    ->label('Bobot (Weight)')
                     ->numeric()
-                    ->required(),
-
-                Textarea::make('description')
-                    ->label('Deskripsi')
-                    ->rows(3)
-                    ->helperText('Deskripsi akan muncul di form penilaian ketika kriteria dipilih.')
-                    ->columnSpan('full'),
+                    ->required()
+                    ->minValue(0)
+                    ->maxValue(1),
             ]);
     }
 
@@ -85,19 +81,18 @@ class CriterionResource extends Resource
 
                 TextColumn::make('weight')
                     ->label('Weight')
-                    ->numeric(decimalPlaces: 2),
-                TextColumn::make('description')
-                    ->label('Deskripsi')
-                    ->limit(50),
+                    ->formatStateUsing(fn ($state) => number_format($state, 2)),
             ])
 
             ->recordActions([
                 EditAction::make()
                     ->form([
                         TextInput::make('name')
+                            ->label('Nama Kriteria')
                             ->required(),
 
                         Select::make('type')
+                            ->label('Tipe')
                             ->options([
                                 'benefit' => 'Benefit',
                                 'cost' => 'Cost',
@@ -105,12 +100,11 @@ class CriterionResource extends Resource
                             ->required(),
 
                         TextInput::make('weight')
+                            ->label('Bobot (Weight)')
                             ->numeric()
-                            ->required(),
-
-                        Textarea::make('description')
-                            ->rows(3)
-                            ->columnSpan('full'),
+                            ->required()
+                            ->minValue(0)
+                            ->maxValue(1),
                     ]),
 
                 DeleteAction::make(),
